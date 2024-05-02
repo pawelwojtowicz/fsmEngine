@@ -10,7 +10,7 @@ public:
 	ICSMConfigurator() {};
 	virtual ~ICSMConfigurator() {};
 	
-	virtual bool InitializeStateMachine( ICSMBuilder* pBuilder ) = 0;
+	virtual bool InitializeStateMachine( ICSMBuilder& pBuilder ) = 0;
 
 private:
 	ICSMConfigurator(const ICSMConfigurator&);

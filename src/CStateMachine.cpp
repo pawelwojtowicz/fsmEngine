@@ -29,7 +29,7 @@ bool CStateMachine::Initialize( ICSMConfigurator* pConfigurator, IActionFactory*
 		
 	if ( 0!= pConfigurator && 0 != m_pActionFactory  )
 	{
-		return pConfigurator->InitializeStateMachine(this);
+		return pConfigurator->InitializeStateMachine(*this);
 	}
 	return false;
 }

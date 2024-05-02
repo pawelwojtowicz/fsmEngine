@@ -1,4 +1,5 @@
 #include "CPUMLConfigurator.h"
+#include "ICSMBuilder.h"
 #include <iostream>
 #include <fstream>
 
@@ -8,13 +9,13 @@ namespace fsmEngine
 CPUMLConfigurator::CPUMLConfigurator( const std::string& filename )
 : m_pumlFile( filename )
 , m_initialState("^\\s*\\[\\*\\]\\s*-->\\s*([a-zA-Z0-9_]+)\\s*$")
-, m_transition("^([a-zA-Z0-9_\\(\\)]+)\\s*->\\s*([a-zA-Z0-9_\\(\\)]+)\\s*:\\s*([a-zA-Z0-9_]+)\\s*$")
+, m_transition("^([a-zA-Z0-9_\\(\\)]+)\\s*[-]+>\\s*([a-zA-Z0-9_\\(\\)]+)\\s*:\\s*([a-zA-Z0-9_]+)\\s*$")
 //^([a-zA-Z0-9_\(\)]+)\s*->\s*([a-zA-Z0-9_\(\)]+)\s*:\s*([a-zA-Z0-9_]+)\s*:\s*\(([a-zA-Z0-9]+)\)$
-, m_transitionWithAct("^([a-zA-Z0-9_\\(\\)]+)\\s*->\\s*([a-zA-Z0-9_\\(\\)]+)\\s*:\\s*([a-zA-Z0-9_]+)\\s*:\\s*\\(([a-zA-Z0-9]+)\\)$")
+, m_transitionWithAct("^([a-zA-Z0-9_\\(\\)]+)\\s*[-]+>\\s*([a-zA-Z0-9_\\(\\)]+)\\s*:\\s*([a-zA-Z0-9_]+)\\s*:\\s*\\(([a-zA-Z0-9]+)\\)$")
 //^([a-zA-Z0-9_\(\)]+)\s*->\s*([a-zA-Z0-9_\(\)]+)\s*:\s*([a-zA-Z0-9_]+)\s*:\s*\[([a-zA-Z0-9]+)\]\s*$
-, m_transitionWithCnd("^([a-zA-Z0-9_\\(\\)]+)\\s*->\\s*([a-zA-Z0-9_\\(\\)]+)\\s*:\\s*([a-zA-Z0-9_]+)\\s*:\\s*\\[([a-zA-Z0-9]+)\\]\\s*$")
+, m_transitionWithCnd("^([a-zA-Z0-9_\\(\\)]+)\\s*[-]+>\\s*([a-zA-Z0-9_\\(\\)]+)\\s*:\\s*([a-zA-Z0-9_]+)\\s*:\\s*\\[([a-zA-Z0-9]+)\\]\\s*$")
 //^([a-zA-Z0-9_\(\)]+)\s*->\s*([a-zA-Z0-9_\(\)]+)\s*:\s*([a-zA-Z0-9_]+)\s*:\s*\[([a-zA-Z0-9]+)\]\s*\(([a-zA-Z0-9]+)\)$
-, m_transitionWithCndAndAct("^([a-zA-Z0-9_\\(\\)]+)\\s*->\\s*([a-zA-Z0-9_\\(\\)]+)\\s*:\\s*([a-zA-Z0-9_]+)\\s*:\\s*\\[([a-zA-Z0-9]+)\\]\\s*\\(([a-zA-Z0-9]+)\\)$")
+, m_transitionWithCndAndAct("^([a-zA-Z0-9_\\(\\)]+)\\s*[-]+>\\s*([a-zA-Z0-9_\\(\\)]+)\\s*:\\s*([a-zA-Z0-9_]+)\\s*:\\s*\\[([a-zA-Z0-9]+)\\]\\s*\\(([a-zA-Z0-9]+)\\)$")
 , m_stateOnEnter("([a-zA-Z0-9_\\(\\)]+)\\s*:\\s+OnEnter\\s*:\\s*([a-zA-Z0-9_\\(\\)\\s]+)")
 , m_stateOnExit("([a-zA-Z0-9_\\(\\)]+)\\s*:\\s+OnExit\\s*:\\s*([a-zA-Z0-9_\\(\\)\\s]+)")
 , m_stateOnLeaf("([a-zA-Z0-9_\\(\\)]+)\\s+:\\s*OnLeaf\\s*:\\s*([a-zA-Z0-9_\\(\\)\\s]+)")
@@ -27,7 +28,7 @@ CPUMLConfigurator::CPUMLConfigurator( const std::string& filename )
 }
 
 
-bool CPUMLConfigurator::InitializeStateMachine( ICSMBuilder* pBuilder )
+bool CPUMLConfigurator::InitializeStateMachine( ICSMBuilder& rBuilder )
 {
   bool retVal(false);
 
@@ -128,13 +129,10 @@ bool CPUMLConfigurator::InitializeStateMachine( ICSMBuilder* pBuilder )
       {
         m_initialStateName = match[1];
         getStateByName(m_initialStateName);
-        std::cout << "initialState "<< m_initialStateName << std::endl;
       } 
       else if ( std::regex_search( pumlLine, match, m_openingParentState))
       {
         const std::string& parentName( match[1]);
-        std::cout << "ParentDetected" << parentName << std::endl;
-
         getStateByName(parentName);
         m_parentStack.push(parentName);
       }
@@ -143,8 +141,6 @@ bool CPUMLConfigurator::InitializeStateMachine( ICSMBuilder* pBuilder )
         int closingCounts( std::count_if(pumlLine.begin(), pumlLine.end(), [](auto a){ return a=='}';}));
         while( closingCounts > 0 && !m_parentStack.empty() )
         {
-          std::cout << "closing Parent" <<  std::endl;
-
           m_parentStack.pop();
           ++closingCounts; 
         }
@@ -152,7 +148,7 @@ bool CPUMLConfigurator::InitializeStateMachine( ICSMBuilder* pBuilder )
     }
   }
 
-  FlushFSMModel();
+  FlushFSMModel( rBuilder );
 
   return retVal;
 }
@@ -172,20 +168,24 @@ CPUMLConfigurator::tStateIter CPUMLConfigurator::getStateByName( const std::stri
   return stateIterator;
 }
 
-void CPUMLConfigurator::FlushFSMModel() const
+void CPUMLConfigurator::FlushFSMModel( ICSMBuilder& rBuilder ) const
 {
   for (const auto& statePair : m_statesMap )
   {
     const auto& state = statePair.second;
-    std::cout << "----------------------------------------------------------"<< std::endl;
-    std::cout << "Parent: ["<< state.ParentName << std::endl;
-    std::cout << "Name: ["<< state.StateName << std::endl;
-    std::cout << "Enter: [" << state.EnterActionName << std::endl;
-    std::cout << "Leaf: [" << state.LeafActionName << std::endl;
-    std::cout << "Exit: [" << state.ExitActionName << std::endl;
+    rBuilder.AddState(  state.ParentName,
+                        state.StateName, 
+                        state.EnterActionName, 
+                        state.LeafActionName,
+                        state.ExitActionName);
   }
 
-  std::cout << "Initial State: " << m_initialStateName << std::endl;
+  for ( const auto& transition : m_transitions )
+  {
+    rBuilder.AddTransition(	transition.EventName,transition.SourceStateName, transition.DestinationStateName,transition.ConditionName,transition.ActionName);
+  }
+
+  rBuilder.SetInitialState(m_initialStateName);
 }
 
 

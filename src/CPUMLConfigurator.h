@@ -40,9 +40,9 @@ public:
   virtual ~CPUMLConfigurator() = default;
 
 private:
-  virtual bool InitializeStateMachine( ICSMBuilder* pBuilder ) override;
+  virtual bool InitializeStateMachine( ICSMBuilder& pBuilder ) override;
 
-  void FlushFSMModel() const;
+  void FlushFSMModel( ICSMBuilder& pBuilder ) const;
 
   tStateIter getStateByName( const std::string& stateName );
 

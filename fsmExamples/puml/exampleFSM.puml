@@ -7,7 +7,7 @@ Parental: OnEnter : Action
 state Parental {
 [*] --> State1
 }
-State1 --> State2 : GoFurther
+State1 ----> State2 : GoFurther
 State2 -> State2 : Stay
 
 State2 -> State1 : GoFurther

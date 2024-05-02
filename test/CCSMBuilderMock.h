@@ -82,7 +82,3 @@ public:
 																			
 	MOCK_METHOD1(	SetInitialState, void( std::string initialState) );
 };
-
-
-#endif
-
