@@ -1,0 +1,16 @@
+@startuml
+[*] --> StateC
+
+state StateA {
+
+StateC -> StateB : EventName:[CheckCondition()](ExecuteAction(teno))
+
+}
+
+StateA -> StateB
+StateA : OnEnter:Action
+StateA : OnExit:Action
+StateA : OnLeaf:Action
+StateA : EventName:[ConditionA](ActionB)
+
+@enduml

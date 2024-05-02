@@ -4,6 +4,8 @@ SET( OUTPUT_NAME fsmEngine )
 
 add_library ( ${OUTPUT_NAME} SHARED
 CAction.cpp
+CPUMLConfigurator.cpp
+CPUMLConfigurator.h
 CState.cpp
 CTransition.cpp
 CStateMachine.cpp 

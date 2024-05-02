@@ -5,6 +5,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 add_executable ( test_fsmEngine
 Test_CState.cpp 
+Test_CPUMLConfigurator.cpp
 #Test_CArgoConfigurator.cpp 
 #Test_CStateMachine.cpp 
 Test_CActionFactory.cpp )
