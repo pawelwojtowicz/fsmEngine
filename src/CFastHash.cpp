@@ -48,7 +48,7 @@ uint32_t CFastHash::CalculateHash32(const void *buf, size_t len, uint32_t seed)
 	// the following trick converts the 64-bit hashcode to Fermat
 	// residue, which shall retain information from both the higher
 	// and lower parts of hashcode.
-        uint64_t h = CalculateHash64(buf, len, seed);
+  uint64_t h = CalculateHash64(buf, len, seed);
 	return h - (h >> 32);
 }
 

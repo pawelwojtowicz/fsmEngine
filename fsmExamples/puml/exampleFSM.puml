@@ -1,16 +1,14 @@
 @startuml
-[*] --> StateC
+[*] --> State1
+State1 --> State2 : GoFurther
 
-state StateA {
+State2 -> State2 : Stay
 
-StateC -> StateB : EventName:[CheckCondition()](ExecuteAction(teno))
+State2 -> State1 : GoFurther
 
-}
-
-StateA -> StateB
-StateA : OnEnter:Action
-StateA : OnExit:Action
-StateA : OnLeaf:Action
-StateA : EventName:[ConditionA](ActionB)
+State1 : OnEnter : Entering1
+State1 : OnExit : Exiting1
+State2 : OnEnter : Entering2
+State2 : OnExit : Exiting2
 
 @enduml
