@@ -1,14 +1,21 @@
 @startuml
-[*] --> State1
-State1 --> State2 : GoFurther
+state SuperParent {
+Parental: OnEnter : Action
+}
 
+
+state Parental {
+[*] --> State1
+}
+State1 --> State2 : GoFurther
 State2 -> State2 : Stay
 
 State2 -> State1 : GoFurther
 
 State1 : OnEnter : Entering1
 State1 : OnExit : Exiting1
+State1 : OnLeaf : Leafing1
 State2 : OnEnter : Entering2
 State2 : OnExit : Exiting2
-
+State2 : OnLeaf : Leafing2
 @enduml

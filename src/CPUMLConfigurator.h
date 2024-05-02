@@ -1,12 +1,14 @@
 #pragma once
 #include <string>
+#include <list>
+#include <stack>
 #include <regex>
 
 #include "ICSMConfigurator.h"
 
 namespace fsmEngine
 {
-class CPUMLConfigurator : ICSMConfigurator
+class CPUMLConfigurator : public ICSMConfigurator
 {
   struct sState
 	{
@@ -17,8 +19,21 @@ class CPUMLConfigurator : ICSMConfigurator
 		std::string ExitActionName  = {};
 	};
 
+  struct sTransition
+  {
+    std::string EventName             = {};
+		std::string SourceStateName       = {};
+		std::string DestinationStateName  = {};
+		std::string ConditionName         = {}; 
+		std::string ActionName            = {};
+  };
+
   using tStateMap = std::map<std::string, sState>;
   using tStateIter = tStateMap::iterator;
+
+  using tTransitionList = std::list<sTransition>;
+
+  using tParentStack = std::stack<std::string>;
 public:
 
   CPUMLConfigurator( const std::string& filename );
@@ -38,6 +53,9 @@ private:
 
   std::regex m_initialState;
   std::regex m_transition;
+  std::regex m_transitionWithAct;
+  std::regex m_transitionWithCnd;
+  std::regex m_transitionWithCndAndAct;
   std::regex m_stateOnEnter;
   std::regex m_stateOnExit;
   std::regex m_stateOnLeaf;
@@ -47,6 +65,10 @@ private:
   std::regex m_closingParentState;
 
   tStateMap m_statesMap;
+
+  tTransitionList m_transitions;
+
+  tParentStack m_parentStack;
 
   std::string m_initialStateName;
 };

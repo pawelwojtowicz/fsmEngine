@@ -27,7 +27,7 @@ private:
 	ICSMBuilderUT& operator=(const ICSMBuilderUT&);
 };
 
-class CCSMBuilderIF: public CSM::ICSMBuilder
+class CCSMBuilderIF: public fsmEngine::ICSMBuilder
 {
 public:
 	CCSMBuilderIF(ICSMBuilderUT* pIF ):m_pBuilderUTIF(pIF) {};
