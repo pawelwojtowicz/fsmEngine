@@ -1,0 +1,12 @@
+@startuml
+[*] --> State1
+State1 ----> State2 : GoFurther:(OperationG)
+State2 -> State1 : GoFurther:(OperationH)
+
+State1 : OnEnter : OperationA
+State1 : OnExit : OperationC
+State1 : OnLeaf : OperationB
+State2 : OnEnter : OperationD
+State2 : OnExit : OperationF
+State2 : OnLeaf : OperationE
+@enduml

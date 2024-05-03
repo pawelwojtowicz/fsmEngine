@@ -32,7 +32,7 @@ void InitializeSMActionFactory( fsmEngine::CActionFactory& actionFactory, TestOp
 	actionFactory.AddCondition( "Condition8", new fsmEngine::CGenericCondition<ITestInterface>( pMockPointer, &ITestInterface::Condition8));	
 }
 
-TEST( CStateMachine, BasicTest_1)
+TEST( CStateMachine, BasicTest)
 {
 	// action/condition mocks
 	fsmEngine::CActionFactory actionFactory;
@@ -57,4 +57,187 @@ TEST( CStateMachine, BasicTest_1)
 	EXPECT_CALL(	operationsMock, OperationB());
 
 	EXPECT_TRUE(stateMachine.DispatchEvent("GoFurther"));
+}
+
+TEST( CStateMachine, TransitionsWithActions)
+{
+	// action/condition mocks
+	fsmEngine::CActionFactory actionFactory;
+	TestOperationsMock operationsMock;
+	InitializeSMActionFactory(actionFactory,&operationsMock);
+
+  std::string filename("fsmExamples/puml/transitionsWithActions.puml");
+  fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
+
+  fsmEngine::CStateMachine stateMachine;
+  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+	
+	
+	EXPECT_CALL(	operationsMock, OperationC());
+  EXPECT_CALL(	operationsMock, OperationG());
+	EXPECT_CALL(	operationsMock, OperationD());
+	EXPECT_CALL(	operationsMock, OperationE());
+	
+	EXPECT_TRUE(stateMachine.DispatchEvent("GoFurther"));
+	
+  EXPECT_CALL(	operationsMock, OperationF());
+  EXPECT_CALL(	operationsMock, OperationH());
+	EXPECT_CALL(	operationsMock, OperationA());
+	EXPECT_CALL(	operationsMock, OperationB());
+
+	EXPECT_TRUE(stateMachine.DispatchEvent("GoFurther"));
+}
+
+TEST( CStateMachine, TransitionsWithActionsAndConditions_1)
+{
+	// action/condition mocks
+	fsmEngine::CActionFactory actionFactory;
+	TestOperationsMock operationsMock;
+	InitializeSMActionFactory(actionFactory,&operationsMock);
+
+  std::string filename("fsmExamples/puml/transitionsWithActionsAndConditions.puml");
+  fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
+
+  fsmEngine::CStateMachine stateMachine;
+  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+	
+  EXPECT_CALL(	operationsMock, Condition1()).WillOnce(Return(true));
+	EXPECT_CALL(	operationsMock, OperationC());
+  EXPECT_CALL(	operationsMock, OperationG());
+	EXPECT_CALL(	operationsMock, OperationD());
+	EXPECT_CALL(	operationsMock, OperationE());
+	
+	EXPECT_TRUE(stateMachine.DispatchEvent("GoFurther"));
+	
+  EXPECT_CALL(	operationsMock, Condition2()).WillOnce(Return(true));
+  EXPECT_CALL(	operationsMock, OperationF());
+  EXPECT_CALL(	operationsMock, OperationH());
+	EXPECT_CALL(	operationsMock, OperationA());
+	EXPECT_CALL(	operationsMock, OperationB());
+
+	EXPECT_TRUE(stateMachine.DispatchEvent("GoFurther"));
+}
+
+TEST( CStateMachine, TransitionsWithActionsAndConditions_2)
+{
+	// action/condition mocks
+	fsmEngine::CActionFactory actionFactory;
+	TestOperationsMock operationsMock;
+	InitializeSMActionFactory(actionFactory,&operationsMock);
+
+  std::string filename("fsmExamples/puml/transitionsWithActionsAndConditions.puml");
+  fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
+
+  fsmEngine::CStateMachine stateMachine;
+  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+	
+  EXPECT_CALL(	operationsMock, Condition1()).WillOnce(Return(false));
+	EXPECT_CALL(	operationsMock, OperationC()).Times(0);
+  EXPECT_CALL(	operationsMock, OperationG()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationD()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationE()).Times(0);
+	
+	EXPECT_TRUE(stateMachine.DispatchEvent("GoFurther"));
+	
+  EXPECT_CALL(	operationsMock, Condition1()).WillOnce(Return(false));
+  EXPECT_CALL(	operationsMock, Condition2()).Times(0);
+  EXPECT_CALL(	operationsMock, OperationF()).Times(0);
+  EXPECT_CALL(	operationsMock, OperationH()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationA()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationB()).Times(0);
+
+	EXPECT_TRUE(stateMachine.DispatchEvent("GoFurther"));
+}
+
+TEST( CStateMachine, InternalTransition_1 )
+{
+	// action/condition mocks
+	fsmEngine::CActionFactory actionFactory;
+	TestOperationsMock operationsMock;
+	InitializeSMActionFactory(actionFactory,&operationsMock);
+
+  std::string filename("fsmExamples/puml/internalTransition.puml");
+  fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
+
+  fsmEngine::CStateMachine stateMachine;
+  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+	
+  EXPECT_CALL(	operationsMock, Condition1()).WillOnce(Return(false));
+	EXPECT_CALL(	operationsMock, OperationA()).Times(1);
+  EXPECT_CALL(	operationsMock, OperationB()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationC()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationD()).Times(0);
+	
+	EXPECT_TRUE(stateMachine.DispatchEvent("FireAction1"));
+  EXPECT_TRUE(stateMachine.DispatchEvent("FireAction2"));
+	
+}
+
+TEST( CStateMachine, InternalTransition_2 )
+{
+	// action/condition mocks
+	fsmEngine::CActionFactory actionFactory;
+	TestOperationsMock operationsMock;
+	InitializeSMActionFactory(actionFactory,&operationsMock);
+
+  std::string filename("fsmExamples/puml/internalTransition.puml");
+  fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
+
+  fsmEngine::CStateMachine stateMachine;
+  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+	
+  EXPECT_CALL(	operationsMock, Condition1()).WillOnce(Return(true));
+	EXPECT_CALL(	operationsMock, OperationA()).Times(1);
+  EXPECT_CALL(	operationsMock, OperationB()).Times(1);
+	EXPECT_CALL(	operationsMock, OperationC()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationD()).Times(0);
+	
+	EXPECT_TRUE(stateMachine.DispatchEvent("FireAction1"));
+  EXPECT_TRUE(stateMachine.DispatchEvent("FireAction2"));
+	
+}
+
+TEST( CStateMachine, InternalTransition_3 )
+{
+	// action/condition mocks
+	fsmEngine::CActionFactory actionFactory;
+	TestOperationsMock operationsMock;
+	InitializeSMActionFactory(actionFactory,&operationsMock);
+
+  std::string filename("fsmExamples/puml/internalTransition.puml");
+  fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
+
+  fsmEngine::CStateMachine stateMachine;
+  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+	
+  EXPECT_CALL(	operationsMock, Condition1()).Times(0);
+  EXPECT_CALL(	operationsMock, Condition2()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationA()).Times(0);
+  EXPECT_CALL(	operationsMock, OperationB()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationC()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationD()).Times(0);
+  EXPECT_CALL(	operationsMock, OperationG()).Times(1);
+	
+	EXPECT_TRUE(stateMachine.DispatchEvent("GoFurther"));	
+
+  EXPECT_CALL(	operationsMock, Condition1()).Times(0);
+  EXPECT_CALL(	operationsMock, Condition2()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationA()).Times(0);
+  EXPECT_CALL(	operationsMock, OperationB()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationC()).Times(1);
+	EXPECT_CALL(	operationsMock, OperationD()).Times(0);
+  EXPECT_CALL(	operationsMock, OperationG()).Times(0);
+
+  EXPECT_TRUE( stateMachine.DispatchEvent("FireAction2"));
+
+  EXPECT_CALL(	operationsMock, Condition1()).Times(0);
+  EXPECT_CALL(	operationsMock, Condition2()).WillOnce(Return(true));
+	EXPECT_CALL(	operationsMock, OperationA()).Times(0);
+  EXPECT_CALL(	operationsMock, OperationB()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationC()).Times(0);
+	EXPECT_CALL(	operationsMock, OperationD()).Times(1);
+  EXPECT_CALL(	operationsMock, OperationG()).Times(0);
+
+  EXPECT_TRUE( stateMachine.DispatchEvent("FireAction1"));
+
 }

@@ -1,0 +1,10 @@
+@startuml
+[*] --> State1
+State1 -> State2 : GoFurther:(OperationG)
+State2 -> State1 : GoFurther:(OperationF)
+
+State1 : FireAction1 : (OperationA)
+State1 : FireAction2 : [Condition1](OperationB)
+State2 : FireAction1 : [Condition2](OperationD)
+State2 : FireAction2 : (OperationC)
+@enduml

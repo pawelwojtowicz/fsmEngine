@@ -19,8 +19,8 @@ CPUMLConfigurator::CPUMLConfigurator( const std::string& filename )
 , m_stateOnEnter("([a-zA-Z0-9_\\(\\)]+)\\s*:\\s+OnEnter\\s*:\\s*([a-zA-Z0-9_\\(\\)\\s]+)")
 , m_stateOnExit("([a-zA-Z0-9_\\(\\)]+)\\s*:\\s+OnExit\\s*:\\s*([a-zA-Z0-9_\\(\\)\\s]+)")
 , m_stateOnLeaf("([a-zA-Z0-9_\\(\\)]+)\\s+:\\s*OnLeaf\\s*:\\s*([a-zA-Z0-9_\\(\\)\\s]+)")
-, m_internalTransitionNoCondition("([a-zA-Z0-9_\\(\\)]+)\\s+:\\s+([a-zA-Z0-9_\\(\\)\\s]+):\\s*\\(\\s*([a-zA-Z0-9_\\(\\)\\s]+)\\s*\\)")
-, m_internalTransitionWithCondition("([a-zA-Z0-9_\\(\\)]+)\\s+:\\s+([a-zA-Z0-9_\\(\\)\\s]+):\\s*\\[\\s*([a-zA-Z0-9_\\(\\)\\s]+)\\s*\\]\\(\\s*([a-zA-Z0-9_\\(\\)\\s]+)\\s*\\)")
+, m_internalTransitionNoCondition("^([a-zA-Z0-9_\\(\\)]+)\\s*:\\s*([a-zA-Z0-9_\\(\\)]+)\\s*:\\s*\\(\\s*([a-zA-Z0-9_\\(\\)\\s]+)\\s*\\)$")
+, m_internalTransitionWithCondition("^([a-zA-Z0-9_\\(\\)]+)\\s*:\\s*([a-zA-Z0-9_\\(\\)]+)\\s*:\\s*\\[\\s*([a-zA-Z0-9_\\(\\)]+)\\s*\\]\\s*\\(\\s*([a-zA-Z0-9_\\(\\)]+)\\s*\\)\\s*$")
 , m_openingParentState("state\\s+([a-zA-Z0-9]+)\\s+\\{\\s*$")
 , m_closingParentState("^([}\\s*]+)$")
 {
@@ -145,6 +145,35 @@ bool CPUMLConfigurator::InitializeStateMachine( IFSMBuilder& rBuilder )
           ++closingCounts; 
         }
       }
+      else if ( std::regex_search(pumlLine, match,m_internalTransitionNoCondition) )
+      {
+        const std::string& stateName = match[1];
+        const std::string& eventName = match[2];
+        const std::string& actionName = match[3];
+
+        sTransition transition;
+        transition.SourceStateName      = stateName;
+        transition.DestinationStateName = stateName;
+        transition.EventName            = eventName;
+        transition.ActionName           = actionName;
+        m_transitions.push_back(transition);
+      }
+      else if ( std::regex_search(pumlLine, match,m_internalTransitionWithCondition) )
+      {
+        const std::string& stateName = match[1];
+        const std::string& eventName = match[2];
+        const std::string& conditionName = match[3];
+        const std::string& actionName = match[4];
+
+        sTransition transition;
+        transition.SourceStateName      = stateName;
+        transition.DestinationStateName = stateName;
+        transition.ConditionName        = conditionName;
+        transition.EventName            = eventName;
+        transition.ActionName           = actionName;
+        m_transitions.push_back(transition);
+      }
+
     }
   }
 
