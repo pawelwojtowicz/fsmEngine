@@ -3,11 +3,11 @@
 
 namespace fsmEngine
 {
-class ICSMBuilder
+class IFSMBuilder
 {
 protected:
-	ICSMBuilder() {};
-	virtual ~ICSMBuilder() {};
+	IFSMBuilder() {};
+	virtual ~IFSMBuilder() {};
 	
 public:
 	virtual void AddState(const std::string& parent, 
@@ -25,7 +25,7 @@ public:
 	virtual void SetInitialState( const std::string& initialState) = 0;
 	
 private:
-	ICSMBuilder(const ICSMBuilder&);
-	ICSMBuilder& operator=( const ICSMBuilder&);
+	IFSMBuilder(const IFSMBuilder&);
+	IFSMBuilder& operator=( const IFSMBuilder&);
 };
 }

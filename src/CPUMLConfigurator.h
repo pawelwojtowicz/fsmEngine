@@ -4,11 +4,11 @@
 #include <stack>
 #include <regex>
 
-#include "ICSMConfigurator.h"
+#include "IFSMConfigurator.h"
 
 namespace fsmEngine
 {
-class CPUMLConfigurator : public ICSMConfigurator
+class CPUMLConfigurator : public IFSMConfigurator
 {
   struct sState
 	{
@@ -40,15 +40,13 @@ public:
   virtual ~CPUMLConfigurator() = default;
 
 private:
-  virtual bool InitializeStateMachine( ICSMBuilder& pBuilder ) override;
+  virtual bool InitializeStateMachine( IFSMBuilder& pBuilder ) override;
 
-  void FlushFSMModel( ICSMBuilder& pBuilder ) const;
+  void FlushFSMModel( IFSMBuilder& pBuilder ) const;
 
   tStateIter getStateByName( const std::string& stateName );
 
 private:
-
-
   std::string m_pumlFile;
 
   std::regex m_initialState;

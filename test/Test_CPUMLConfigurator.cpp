@@ -14,7 +14,7 @@ TEST( CPUMLConfigurator, Basic )
   std::string filename("/home/pawel/fsmEngine/fsmExamples/puml/basicFSM.puml");
 
   fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
-  fsmEngine::ICSMConfigurator& configuratorInterface(fsmConfigurator);
+  fsmEngine::IFSMConfigurator& configuratorInterface(fsmConfigurator);
 
 	EXPECT_CALL(mockInstance, AddState( std::string(""),		 					// parent, 
 																			std::string("SuperParent"),  // stateName, 

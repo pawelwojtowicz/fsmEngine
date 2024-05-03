@@ -1,6 +1,6 @@
 #pragma once
 #include <gmock/gmock.h>
-#include <ICSMBuilder.h>
+#include <IFSMBuilder.h>
 
 class ICSMBuilderUT
 {
@@ -27,7 +27,7 @@ private:
 	ICSMBuilderUT& operator=(const ICSMBuilderUT&);
 };
 
-class CCSMBuilderIF: public fsmEngine::ICSMBuilder
+class CCSMBuilderIF: public fsmEngine::IFSMBuilder
 {
 public:
 	CCSMBuilderIF(ICSMBuilderUT* pIF ):m_pBuilderUTIF(pIF) {};

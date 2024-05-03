@@ -1,5 +1,5 @@
 #include "CPUMLConfigurator.h"
-#include "ICSMBuilder.h"
+#include "IFSMBuilder.h"
 #include <iostream>
 #include <fstream>
 
@@ -28,7 +28,7 @@ CPUMLConfigurator::CPUMLConfigurator( const std::string& filename )
 }
 
 
-bool CPUMLConfigurator::InitializeStateMachine( ICSMBuilder& rBuilder )
+bool CPUMLConfigurator::InitializeStateMachine( IFSMBuilder& rBuilder )
 {
   bool retVal(false);
 
@@ -168,7 +168,7 @@ CPUMLConfigurator::tStateIter CPUMLConfigurator::getStateByName( const std::stri
   return stateIterator;
 }
 
-void CPUMLConfigurator::FlushFSMModel( ICSMBuilder& rBuilder ) const
+void CPUMLConfigurator::FlushFSMModel( IFSMBuilder& rBuilder ) const
 {
   for (const auto& statePair : m_statesMap )
   {

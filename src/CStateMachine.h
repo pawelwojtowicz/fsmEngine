@@ -1,17 +1,17 @@
 #pragma once
 #include <map>
 #include <list>
-#include "ICSMBuilder.h"
+#include "IFSMBuilder.h"
 #include <queue>
 
 namespace fsmEngine
 {
 
 class IActionFactory;
-class ICSMConfigurator;
+class IFSMConfigurator;
 class CState;
 
-class CStateMachine : public ICSMBuilder
+class CStateMachine : public IFSMBuilder
 {
 	typedef std::map<uint32_t, CState*> tStateMap;
 	typedef tStateMap::const_iterator tStateMapConstIterator;
@@ -28,13 +28,13 @@ public:
 	CStateMachine();
 	virtual ~CStateMachine();
 	
-	bool Initialize( ICSMConfigurator* pConfigurator, IActionFactory* pFactory);
+	bool Initialize( IFSMConfigurator* pConfigurator, IActionFactory* pFactory);
 	
 	bool DispatchEvent( const std::string& eventName );
 
 private:
 
-	/** implementation of CSM::ICSMBuilder */
+	/** implementation of fsmEngine::IFSMBuilder */
 	virtual void AddState(const std::string& parent, 
 												const std::string& stateName, 
 												const std::string& enterActionName, 

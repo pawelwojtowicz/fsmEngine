@@ -1,6 +1,6 @@
 #include "CStateMachine.h"
 #include "IActionFactory.h"
-#include "ICSMConfigurator.h"
+#include "IFSMConfigurator.h"
 #include "IAction.h"
 #include "CState.h"
 #include "CTransition.h"
@@ -23,7 +23,7 @@ CStateMachine::~CStateMachine()
 {
 }
 	
-bool CStateMachine::Initialize( ICSMConfigurator* pConfigurator, IActionFactory* pActionFactory)
+bool CStateMachine::Initialize( IFSMConfigurator* pConfigurator, IActionFactory* pActionFactory)
 {
 	m_pActionFactory = pActionFactory;
 		
