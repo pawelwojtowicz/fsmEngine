@@ -33,16 +33,16 @@ TEST( CPUMLConfigurator, Basic )
 
 	EXPECT_CALL(mockInstance, AddState( std::string("Parental"), 			// parent, 
 																			std::string("State1"), 				// stateName, 
-																			std::string("Entering1"),	// enterActionName, 
-																			std::string("Leafing1"), 							// leafActionName, 
-																			std::string("Exiting1")  							// exitActioName
+																			std::string("OperationA"),	// enterActionName, 
+																			std::string("OperationB"), 							// leafActionName, 
+																			std::string("OperationC")  							// exitActioName
 																			)).Times(1);	
 
 	EXPECT_CALL(mockInstance, AddState( std::string(""), 			// parent, 
 																			std::string("State2"), 				// stateName, 
-																			std::string("Entering2"), 							// enterActionName, 
-																			std::string("Leafing2"), 							// leafActionName, 
-																			std::string("Exiting2")  	// exitActioName
+																			std::string("OperationD"), 							// enterActionName, 
+																			std::string("OperationE"), 							// leafActionName, 
+																			std::string("OperationF")  	// exitActioName
 																			)).Times(1);	
 																			
 	EXPECT_CALL(mockInstance, AddTransition(std::string("GoFurther"),	// eventName,

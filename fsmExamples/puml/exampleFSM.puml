@@ -12,10 +12,10 @@ State2 -> State2 : Stay
 
 State2 -> State1 : GoFurther
 
-State1 : OnEnter : Entering1
-State1 : OnExit : Exiting1
-State1 : OnLeaf : Leafing1
-State2 : OnEnter : Entering2
-State2 : OnExit : Exiting2
-State2 : OnLeaf : Leafing2
+State1 : OnEnter : OperationA
+State1 : OnExit : OperationC
+State1 : OnLeaf : OperationB
+State2 : OnEnter : OperationD
+State2 : OnExit : OperationF
+State2 : OnLeaf : OperationE
 @enduml
