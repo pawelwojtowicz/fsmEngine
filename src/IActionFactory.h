@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <memory>
 
 namespace fsmEngine
 {
@@ -13,9 +14,9 @@ protected:
 	virtual ~IActionFactory() {};
 
 public:
-	virtual IAction* GetAction( const std::string& actionName ) const = 0 ;
+	virtual std::shared_ptr<IAction> GetAction( const std::string& actionName ) const = 0 ;
 	
-	virtual ICondition* GetCondition( const std::string& conditionName) const = 0;
+	virtual std::shared_ptr<ICondition> GetCondition( const std::string& conditionName) const = 0;
 	
 private:
 	IActionFactory(const IActionFactory&);

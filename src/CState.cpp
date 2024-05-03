@@ -4,7 +4,7 @@
 
 namespace fsmEngine
 {
-CState::CState( CState* pParentState, const std::string& stateName, IAction* enterAction, IAction* leafAction, IAction* exitAction)
+CState::CState( std::shared_ptr<CState> pParentState, const std::string& stateName, std::shared_ptr<IAction> enterAction, std::shared_ptr<IAction> leafAction, std::shared_ptr<IAction> exitAction)
 : m_pParentState(pParentState)
 , m_stateName(stateName)
 , m_pEnterAction(enterAction)
@@ -15,15 +15,9 @@ CState::CState( CState* pParentState, const std::string& stateName, IAction* ent
 	
 CState::~CState()
 {
-	for (	tTranstionIterator pIter = m_nameHashToTransitionMap.begin() ; 
-				m_nameHashToTransitionMap.end() != pIter ; 
-				++pIter)
-	{
-		delete pIter->second;
-	}
 }
 
-void CState::UpdateState(CState* pParentState, IAction* enterAction, IAction* leafAction, IAction* exitAction)
+void CState::UpdateState(std::shared_ptr<CState> pParentState, std::shared_ptr<IAction> enterAction, std::shared_ptr<IAction> leafAction, std::shared_ptr<IAction> exitAction)
 {
 	m_pParentState = pParentState;
 	m_pEnterAction = enterAction;
@@ -37,19 +31,19 @@ const std::string& CState::GetName() const
 	return m_stateName;
 }
 
-CState* CState::GetParent() const
+std::shared_ptr<CState> CState::GetParent() const
 {
 	return m_pParentState;
 }
 
-void CState::AddTransition( const uint32_t eventNameHash, CTransition* pTransition )
+void CState::AddTransition( const uint32_t eventNameHash, std::shared_ptr<CTransition> pTransition )
 {
 	m_nameHashToTransitionMap.insert( tTransitionMap::value_type(eventNameHash, pTransition));
 }
 	
 void CState::ExecuteEnterAction()
 {
-	if ( 0 != m_pEnterAction )
+	if ( m_pEnterAction )
 	{
 		//LOG(DATA, ("CSM[]: State:[%s] - Executing ENTER action [%s]", m_stateName.c_str(), m_pEnterAction->GetName().c_str()));
 		m_pEnterAction->Execute();
@@ -58,7 +52,7 @@ void CState::ExecuteEnterAction()
 
 void CState::ExecuteLeafAction()
 {
-	if ( 0 != m_pLeafAction )
+	if ( m_pLeafAction )
 	{
 //		LOG(DATA, ("CSM[]: State:[%s] - Executing LEAF action [%s]", m_stateName.c_str(), m_pLeafAction->GetName().c_str()));
 		m_pLeafAction->Execute();
@@ -67,14 +61,14 @@ void CState::ExecuteLeafAction()
 
 void CState::ExecuteExitAction()
 {
-	if ( 0 != m_pExitAction )
+	if ( m_pExitAction )
 	{
 //		LOG(DATA, ("CSM[]: State:[%s] - Executing EXIT action [%s]", m_stateName.c_str(), m_pExitAction->GetName().c_str()));
 		m_pExitAction->Execute();
 	}
 }
 
-CTransition* CState::GetTransition( const uint32_t eventNameHash )
+std::shared_ptr<CTransition> CState::GetTransition( const uint32_t eventNameHash )
 {
 	tTranstionIterator beginIter( m_nameHashToTransitionMap.lower_bound( eventNameHash) );
 	tTranstionIterator endIter( m_nameHashToTransitionMap.upper_bound( eventNameHash ) );

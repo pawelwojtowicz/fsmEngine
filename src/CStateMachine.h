@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <list>
+#include <memory>
 #include "IFSMBuilder.h"
 #include <queue>
 
@@ -13,11 +14,11 @@ class CState;
 
 class CStateMachine : public IFSMBuilder
 {
-	typedef std::map<uint32_t, CState*> tStateMap;
+	typedef std::map<uint32_t, std::shared_ptr<CState>> tStateMap;
 	typedef tStateMap::const_iterator tStateMapConstIterator;
 	typedef tStateMap::iterator tStateMapIterator;
 	
-	typedef std::list<CState*> tStateList;
+	typedef std::list<std::shared_ptr<CState>> tStateList;
 	typedef tStateList::iterator tStateListIterator;
 	typedef tStateList::reverse_iterator tStateListReverseIterator;
 
@@ -61,7 +62,7 @@ private:
 	
 	tStateMap m_stateMap;
 	
-	CState* m_pCurrentState;
+	std::shared_ptr<CState> m_pCurrentState;
 
 	bool m_transitionInProgress;
 

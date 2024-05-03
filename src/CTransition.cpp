@@ -6,7 +6,7 @@
 namespace fsmEngine
 {
 
-CTransition::CTransition( const std::string& name, ICondition* pCondition, IAction* pAction, CState* pTargetState)
+CTransition::CTransition( const std::string& name, std::shared_ptr<ICondition> pCondition, std::shared_ptr<IAction> pAction, std::shared_ptr<CState> pTargetState)
 :	m_eventName(name)
 , m_pCondition(pCondition)
 , m_pAction(pAction)
@@ -30,9 +30,9 @@ bool CTransition::CanExecute()
 	
 void CTransition::ExecuteAction()
 {
-	if ( 0 != m_pAction )
+	if ( m_pAction )
 	{
-		if (0!=m_pTargetState)
+		if ( m_pTargetState)
 		{
 /**			LOG(DATA, ("CSM[]: Transition to state:[%s]triggered by event:[%s] fires the action:[%s]", 	m_pTargetState->GetName().c_str(), 
 																																																				m_eventName.c_str(), 
@@ -47,7 +47,7 @@ void CTransition::ExecuteAction()
 	}
 }
 
-CState* CTransition::GetTargetState()
+std::shared_ptr<CState> CTransition::GetTargetState()
 {
 
 	return m_pTargetState;

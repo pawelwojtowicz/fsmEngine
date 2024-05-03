@@ -6,7 +6,6 @@
 #include "CTransition.h"
 #include "CFastHash.h"
 #include <algorithm>
-#include <stdio.h>
 namespace fsmEngine
 {
 static const uint32_t cUInt32_CSM_HashSeed = 0x11FF;
@@ -41,11 +40,11 @@ void CStateMachine::AddState(	const std::string& parentName,
 															const std::string& leafActionName, 
 															const std::string& exitActionName)
 {
-	CState* pParentState(0);
+	std::shared_ptr<CState> pParentState;
 	
-	IAction* pEnterAction(0);
-	IAction* pLeafAction(0);
-	IAction* pExitAction(0);
+	std::shared_ptr<IAction> pEnterAction;
+	std::shared_ptr<IAction> pLeafAction;
+	std::shared_ptr<IAction> pExitAction;
 	
 	uint32_t parentNameHash(CFastHash::CalculateHash32(parentName, cUInt32_CSM_HashSeed));
 	uint32_t stateNameHash(CFastHash::CalculateHash32(stateName, cUInt32_CSM_HashSeed));
@@ -55,7 +54,7 @@ void CStateMachine::AddState(	const std::string& parentName,
 		if ( !enterActionName.empty() )
 		{
 			pEnterAction = m_pActionFactory->GetAction(enterActionName);
-			if (0!=pEnterAction)
+			if (pEnterAction)
 			{
 				pEnterAction->SetName(enterActionName);
 			}
@@ -64,7 +63,7 @@ void CStateMachine::AddState(	const std::string& parentName,
 		if ( !leafActionName.empty() )
 		{
 			pLeafAction = m_pActionFactory->GetAction(leafActionName);
-			if (0!=pLeafAction)
+			if (pLeafAction)
 			{
 				pLeafAction->SetName(leafActionName);
 			}
@@ -73,7 +72,7 @@ void CStateMachine::AddState(	const std::string& parentName,
 		if ( !exitActionName.empty() )
 		{
 			pExitAction = m_pActionFactory->GetAction(exitActionName);
-			if (0!=pExitAction)
+			if (pExitAction)
 			{
 				pExitAction->SetName(exitActionName);
 			}
@@ -89,7 +88,7 @@ void CStateMachine::AddState(	const std::string& parentName,
 		}
 		else
 		{
-			pParentState = new CState( 0 , parentName, 0 , 0, 0 );
+			pParentState = std::make_shared<CState>( std::shared_ptr<CState>({}) , parentName, std::shared_ptr<IAction>({}) , std::shared_ptr<IAction>({}), std::shared_ptr<IAction>({}) );
 		
 			m_stateMap.insert( tStateMap::value_type(parentNameHash,pParentState));
 		}	
@@ -98,7 +97,7 @@ void CStateMachine::AddState(	const std::string& parentName,
 	tStateMapIterator stateIterator(m_stateMap.find(stateNameHash));
 	if ( m_stateMap.end() == stateIterator )
 	{
-		CState* pState = new CState( pParentState, stateName, pEnterAction, pLeafAction, pExitAction );
+		std::shared_ptr<CState> pState = std::make_shared<CState>( pParentState, stateName, pEnterAction, pLeafAction, pExitAction );
 		m_stateMap.insert( tStateMap::value_type(stateNameHash,pState));
 
 	}
@@ -119,10 +118,10 @@ void CStateMachine::AddTransition(	const std::string& eventName,
 	uint32_t sourceNameHash(CFastHash::CalculateHash32(sourceStateName, cUInt32_CSM_HashSeed));
 	uint32_t targetNameHash(CFastHash::CalculateHash32(targetStateName, cUInt32_CSM_HashSeed));
 	
-	CState* pSourceState(0);
-	CState* pTargetState(0);
-	IAction* pTransitionAction(0);
-	ICondition* pTransitionCondition(0);
+	std::shared_ptr<CState> pSourceState;
+	std::shared_ptr<CState> pTargetState;
+	std::shared_ptr<IAction> pTransitionAction;
+	std::shared_ptr<ICondition> pTransitionCondition;
 	
 	tStateMapConstIterator pSourceStateIter(m_stateMap.find(sourceNameHash));
 	if ( m_stateMap.end() != pSourceStateIter )
@@ -139,7 +138,7 @@ void CStateMachine::AddTransition(	const std::string& eventName,
 		}
 	}
 	
-	if ( 0 != pSourceState )
+	if ( pSourceState )
 	{
 		if ( 0 !=m_pActionFactory )
 		{
@@ -158,7 +157,7 @@ void CStateMachine::AddTransition(	const std::string& eventName,
 			}
 		}
 		
-		CTransition* pTransition = new CTransition( eventName , 
+		std::shared_ptr<CTransition> pTransition = std::make_shared<CTransition>( eventName , 
 																								pTransitionCondition, 
 																								pTransitionAction, 
 																								pTargetState);
@@ -203,22 +202,22 @@ bool CStateMachine::ProcessEvent( const std::string& eventName )
 {
 	uint32_t eventNameHash(CFastHash::CalculateHash32( eventName, cUInt32_CSM_HashSeed));
 
-	if ( 0 != m_pCurrentState )
+	if ( m_pCurrentState )
 	{
 		//LOG(DATA, ("CSM[]: ProcessEvent - eventName[%s] originState[%s]", eventName.c_str(),m_pCurrentState->GetName().c_str()));
-		CTransition* pTransition(0);
-		CState* pTransitionSrc(m_pCurrentState);
+		std::shared_ptr<CTransition> pTransition;
+		std::shared_ptr<CState> pTransitionSrc(m_pCurrentState);
 		// search for the starting from the current state, up to the root parent
-		while(0!=pTransitionSrc && 0==pTransition)
+		while( pTransitionSrc && !pTransition)
 		{
 			pTransition = pTransitionSrc->GetTransition( eventNameHash );
 			pTransitionSrc = pTransitionSrc->GetParent();
 		}
 		
 		// there is a transition, which fits the nameHash and the condition
-		if ( 0 != pTransition )
+		if ( pTransition )
 		{
-			CState* pTargetState( pTransition->GetTargetState() );
+			std::shared_ptr<CState> pTargetState( pTransition->GetTargetState() );
 			
 			if (0!= pTargetState)
 			{
@@ -227,8 +226,8 @@ bool CStateMachine::ProcessEvent( const std::string& eventName )
 			
 				//prepare the list of the parents of target and source states
 				//it will be used to evaluate the set of enter/exit actions to be exeuted
-				CState* pState(m_pCurrentState);
-				while ( 0 != pState )
+				std::shared_ptr<CState> pState(m_pCurrentState);
+				while ( pState )
 				{
 					sourceStates.push_back( pState );
 					pState = pState->GetParent();
