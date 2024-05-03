@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Install gmock+gtest
+      run: sudo apt-get -y install libgtest-dev libgmock-dev
     - uses: actions/checkout@v4
 
     - name: Configure CMake
