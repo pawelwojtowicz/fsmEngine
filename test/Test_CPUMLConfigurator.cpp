@@ -11,7 +11,7 @@ TEST( CPUMLConfigurator, Basic )
   CCSMBuilderMock mockInstance;
 	CCSMBuilderIF mockInterface(&mockInstance);
 
-  std::string filename("/home/pawel/fsmEngine/fsmExamples/puml/exampleFSM.puml");
+  std::string filename("/home/pawel/fsmEngine/fsmExamples/puml/basicFSM.puml");
 
   fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
   fsmEngine::ICSMConfigurator& configuratorInterface(fsmConfigurator);

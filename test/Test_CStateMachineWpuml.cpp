@@ -39,7 +39,7 @@ TEST( CStateMachine, BasicTest_1)
 	TestOperationsMock operationsMock;
 	InitializeSMActionFactory(actionFactory,&operationsMock);
 
-  std::string filename("/home/pawel/fsmEngine/fsmExamples/puml/exampleFSM.puml");
+  std::string filename("/home/pawel/fsmEngine/fsmExamples/puml/basicFSM.puml");
   fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
 
   fsmEngine::CStateMachine stateMachine;
