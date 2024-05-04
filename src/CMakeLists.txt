@@ -4,6 +4,8 @@ SET( OUTPUT_NAME fsmEngine )
 
 add_library ( ${OUTPUT_NAME} SHARED
 CAction.cpp
+CLambdaAction.cpp
+CLambdaCondition.cpp
 CPUMLConfigurator.cpp
 CPUMLConfigurator.h
 CState.cpp
