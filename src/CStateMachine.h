@@ -26,10 +26,10 @@ class CStateMachine : public IFSMBuilder
 	
 	
 public:
-	CStateMachine();
+	CStateMachine( IActionFactory& rActionFactory);
 	virtual ~CStateMachine();
 	
-	bool Initialize( IFSMConfigurator* pConfigurator, IActionFactory* pFactory);
+	bool Initialize( IFSMConfigurator& pConfigurator);
 	
 	bool DispatchEvent( const std::string& eventName );
 
@@ -58,7 +58,7 @@ private:
 	CStateMachine(const CStateMachine&);
 	CStateMachine& operator=(const CStateMachine&);
 	
-	IActionFactory* m_pActionFactory;
+	IActionFactory& m_rActionFactory;
 	
 	tStateMap m_stateMap;
 	

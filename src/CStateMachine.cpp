@@ -11,8 +11,8 @@ namespace fsmEngine
 static const uint32_t cUInt32_CSM_HashSeed = 0x11FF;
 
 
-CStateMachine::CStateMachine()
-: m_pActionFactory(0)
+CStateMachine::CStateMachine(IActionFactory& rFactory)
+: m_rActionFactory(rFactory)
 , m_pCurrentState(0)
 , m_transitionInProgress(false)
 {
@@ -22,15 +22,9 @@ CStateMachine::~CStateMachine()
 {
 }
 	
-bool CStateMachine::Initialize( IFSMConfigurator* pConfigurator, IActionFactory* pActionFactory)
-{
-	m_pActionFactory = pActionFactory;
-		
-	if ( 0!= pConfigurator && 0 != m_pActionFactory  )
-	{
-		return pConfigurator->InitializeStateMachine(*this);
-	}
-	return false;
+bool CStateMachine::Initialize( IFSMConfigurator& rConfigurator)
+{		
+  return rConfigurator.InitializeStateMachine(*this);
 }
 
 
@@ -49,35 +43,32 @@ void CStateMachine::AddState(	const std::string& parentName,
 	uint32_t parentNameHash(CFastHash::CalculateHash32(parentName, cUInt32_CSM_HashSeed));
 	uint32_t stateNameHash(CFastHash::CalculateHash32(stateName, cUInt32_CSM_HashSeed));
 	
-	if ( 0 != m_pActionFactory )
-	{
-		if ( !enterActionName.empty() )
-		{
-			pEnterAction = m_pActionFactory->GetAction(enterActionName);
-			if (pEnterAction)
-			{
-				pEnterAction->SetName(enterActionName);
-			}
-		}
-		
-		if ( !leafActionName.empty() )
-		{
-			pLeafAction = m_pActionFactory->GetAction(leafActionName);
-			if (pLeafAction)
-			{
-				pLeafAction->SetName(leafActionName);
-			}
-		}
-		
-		if ( !exitActionName.empty() )
-		{
-			pExitAction = m_pActionFactory->GetAction(exitActionName);
-			if (pExitAction)
-			{
-				pExitAction->SetName(exitActionName);
-			}
-		}
-	}
+  if ( !enterActionName.empty() )
+  {
+    pEnterAction = m_rActionFactory.GetAction(enterActionName);
+    if (pEnterAction)
+    {
+      pEnterAction->SetName(enterActionName);
+    }
+  }
+  
+  if ( !leafActionName.empty() )
+  {
+    pLeafAction = m_rActionFactory.GetAction(leafActionName);
+    if (pLeafAction)
+    {
+      pLeafAction->SetName(leafActionName);
+    }
+  }
+  
+  if ( !exitActionName.empty() )
+  {
+    pExitAction = m_rActionFactory.GetAction(exitActionName);
+    if (pExitAction)
+    {
+      pExitAction->SetName(exitActionName);
+    }
+  }
 	
 	if ( !parentName.empty() )
 	{
@@ -140,22 +131,19 @@ void CStateMachine::AddTransition(	const std::string& eventName,
 	
 	if ( pSourceState )
 	{
-		if ( 0 !=m_pActionFactory )
-		{
-			if ( !conditionName.empty() )
-			{
-				pTransitionCondition = m_pActionFactory->GetCondition(conditionName);
-			}
-		
-			if ( !actionName.empty() )
-			{
-				pTransitionAction = m_pActionFactory->GetAction(actionName);
-				if (0!=pTransitionAction)
-				{
-					pTransitionAction->SetName(actionName);
-				}
-			}
-		}
+    if ( !conditionName.empty() )
+    {
+      pTransitionCondition = m_rActionFactory.GetCondition(conditionName);
+    }
+  
+    if ( !actionName.empty() )
+    {
+      pTransitionAction = m_rActionFactory.GetAction(actionName);
+      if (0!=pTransitionAction)
+      {
+        pTransitionAction->SetName(actionName);
+      }
+    }
 		
 		std::shared_ptr<CTransition> pTransition = std::make_shared<CTransition>( eventName , 
 																								pTransitionCondition, 

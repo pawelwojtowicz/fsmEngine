@@ -43,8 +43,8 @@ TEST( CStateMachine, BasicTest)
   std::string filename("fsmExamples/puml/basicFSM.puml");
   fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
 
-  fsmEngine::CStateMachine stateMachine;
-  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+  fsmEngine::CStateMachine stateMachine(actionFactory);
+  stateMachine.Initialize( fsmConfigurator );
 	
 	
 	EXPECT_CALL(	operationsMock, OperationC());
@@ -70,8 +70,8 @@ TEST( CStateMachine, TransitionsWithActions)
   std::string filename("fsmExamples/puml/transitionsWithActions.puml");
   fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
 
-  fsmEngine::CStateMachine stateMachine;
-  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+  fsmEngine::CStateMachine stateMachine(actionFactory);
+  stateMachine.Initialize( fsmConfigurator );
 	
 	
 	EXPECT_CALL(	operationsMock, OperationC());
@@ -99,8 +99,8 @@ TEST( CStateMachine, TransitionsWithActionsAndConditions_1)
   std::string filename("fsmExamples/puml/transitionsWithActionsAndConditions.puml");
   fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
 
-  fsmEngine::CStateMachine stateMachine;
-  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+  fsmEngine::CStateMachine stateMachine(actionFactory);
+  stateMachine.Initialize( fsmConfigurator );
 	
   EXPECT_CALL(	operationsMock, Condition1()).WillOnce(Return(true));
 	EXPECT_CALL(	operationsMock, OperationC());
@@ -129,8 +129,8 @@ TEST( CStateMachine, TransitionsWithActionsAndConditions_2)
   std::string filename("fsmExamples/puml/transitionsWithActionsAndConditions.puml");
   fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
 
-  fsmEngine::CStateMachine stateMachine;
-  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+  fsmEngine::CStateMachine stateMachine(actionFactory);
+  stateMachine.Initialize( fsmConfigurator );
 	
   EXPECT_CALL(	operationsMock, Condition1()).WillOnce(Return(false));
 	EXPECT_CALL(	operationsMock, OperationC()).Times(0);
@@ -160,8 +160,8 @@ TEST( CStateMachine, InternalTransition_1 )
   std::string filename("fsmExamples/puml/internalTransition.puml");
   fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
 
-  fsmEngine::CStateMachine stateMachine;
-  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+  fsmEngine::CStateMachine stateMachine(actionFactory);
+  stateMachine.Initialize( fsmConfigurator );
 	
   EXPECT_CALL(	operationsMock, Condition1()).WillOnce(Return(false));
 	EXPECT_CALL(	operationsMock, OperationA()).Times(1);
@@ -184,8 +184,8 @@ TEST( CStateMachine, InternalTransition_2 )
   std::string filename("fsmExamples/puml/internalTransition.puml");
   fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
 
-  fsmEngine::CStateMachine stateMachine;
-  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+  fsmEngine::CStateMachine stateMachine(actionFactory);
+  stateMachine.Initialize( fsmConfigurator );
 	
   EXPECT_CALL(	operationsMock, Condition1()).WillOnce(Return(true));
 	EXPECT_CALL(	operationsMock, OperationA()).Times(1);
@@ -208,8 +208,8 @@ TEST( CStateMachine, InternalTransition_3 )
   std::string filename("fsmExamples/puml/internalTransition.puml");
   fsmEngine::CPUMLConfigurator fsmConfigurator( filename );
 
-  fsmEngine::CStateMachine stateMachine;
-  stateMachine.Initialize( &fsmConfigurator, &actionFactory );
+  fsmEngine::CStateMachine stateMachine(actionFactory);
+  stateMachine.Initialize( fsmConfigurator );
 	
   EXPECT_CALL(	operationsMock, Condition1()).Times(0);
   EXPECT_CALL(	operationsMock, Condition2()).Times(0);
